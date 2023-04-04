@@ -11,13 +11,12 @@ library(vars)
 set.seed(20230322)
 
 ####### VAR estimation
-
-normal_var_data <- as.matrix(cbind(stat_nl, final_stat_data))
+normal_var_data <- readRDS("data/VARdata.rds")
 var_train <- normal_var_data[1:113,]
 var_test <- normal_var_data[114:161,]
 
 # Determine upper bound 
-lags_upbound_BIC(var_train)
+lags_upbound_BIC(var_train)  # 1
 
 first_lasso_var <- sparseVAR(scale(normal_var_data[1:(113),]), p = 1, VARpen = "L1",
                              selection = "cv")
