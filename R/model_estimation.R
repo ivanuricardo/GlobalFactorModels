@@ -4,7 +4,7 @@ library(HDeconometrics)
 library(bigtime)
 library(HDGCvar)
 library(vars)
-library(tenso)
+library(tensorTS)
 
 set.seed(20230322)
 
@@ -167,8 +167,18 @@ sgfavar_res_plot6 <- plot(as.numeric(sgfavar_forecast_residuals[,13]), type = 'l
                          main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 
-####### Matrix DFM of Wang
+####### Matrix DFM of Wang TODO
+matrixdfm_data <- readRDS("data/MATfactordata.rds")
 
+lags_upbound_BIC(matrixdfm_data)  # 2
+
+matrixdfm_train <- matrixdfm_data[1:113,]
+matrixdfm_test <- matrixdfm_data[114:161,]
+first_gfavar <- VAR(gfavar_train, type = "none", p = 3)
+first_prediction_gfavar <- predict(first_gfavar, n.ahead = 1)
+first_forecast_gfavar <- sapply(first_prediction_gfavar$fcst, `[`, 1)
+gfavar_forecast_residuals <- data.frame(t(matrix((first_forecast_gfavar -
+                                                    gfavar_test[1,])^2)))
 
 
 

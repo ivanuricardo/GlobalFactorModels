@@ -7,6 +7,7 @@ library(plotly)
 library(tensorFun)
 library(nowcasting)
 library(tensor)
+library(tensorTS)
 set.seed(20230322)
 
 ###### Constructing Data
@@ -46,7 +47,7 @@ levels_tensor_data <- updated_gvar %>%
 # This is a neat trick to convert the long matrix to a wide matrix with the 
 # target variables
 perm_tensor_data <- aperm(levels_tensor_data, c(1,3,2))
-mat_data <- unfold(perm_tensor_data, 1)
+mat_data <- tensorFun::unfold(perm_tensor_data, 1)
 
 # Perform Unit Root tests and difference the series appropriately
 # I lose the first two observations
@@ -56,6 +57,22 @@ stat_tensor_data <- order_integration(mat_data)
 final_stat_data <- stat_tensor_data$diff_data[-1:-2,]
 final_stat_tensor <- aperm(array(final_stat_data, dim = c(161, 5, 31)), c(1,3,2))
 
+###### Full Data Tensor
+sa_gvar1[, c("date", "country", "eps", "poil", "pmetal", "pmat")] <- list(NULL)
+full_data <- sa_gvar1[ , colSums(is.na(sa_gvar1))==0]
+
+# create 3-dimensional tensor of full data
+levels_full <- full_data %>% 
+  as.matrix() %>% 
+  array(dim = c(163, 32, 5))
+perm_tensor_full <- aperm(levels_full, c(1,3,2))
+mat_full <- tensorFun::unfold(perm_tensor_full, 1)
+
+# Stationary variables
+stat_full_data <- order_integration(mat_full)
+stat_full <- stat_full_data$diff_data[-1:-2,]
+full_stat_tensor <- aperm(array(stat_full, dim = c(161, 5, 32)), c(1,3,2))
+saveRDS(full_stat_tensor, "fulldata.rds")
 
 ###### VAR preprocessing
 normal_var_data <- as.matrix(cbind(stat_nl, final_stat_data))
@@ -157,8 +174,16 @@ num_factors <- country_factors*econ_factors
 gfavar_data <- cbind(stat_nl, world_factors)
 saveRDS(gfavar_data, "GFAVARdata.rds")
 
+###### Matrix Factor Model Preprocessing
 
+# Perform the matrix factor model on the same data as the HOSVD
+matrix_factor_model <- tenFM.est(final_stat_tensor, r = c(5,3))
 
+# Extract the factors and flatten them to world factors
+matrix_factors <- matrix_factor_model$Ft
+world_factors2 <- tensorFun::unfold(matrix_factors, 1)
 
-
+# Append to the stationary Netherlands data
+mat_factor_data <- cbind(stat_nl, world_factors2)
+saveRDS(mat_factor_data, "MATfactordata.rds")
 
