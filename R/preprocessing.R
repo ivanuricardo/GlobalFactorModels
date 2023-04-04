@@ -4,6 +4,7 @@ library(tidyverse)
 library(reshape2)
 library(bootUR)
 library(tensorFun)
+library(nowcasting)
 set.seed(20230322)
 
 ###### Constructing Data
@@ -60,6 +61,15 @@ saveRDS(normal_var_data, "VARdata.rds")
 
 ###### FAVAR preprocessing
 
+# How many factors?
+ICfactors(final_stat_data) # 6 factors
+
+# Extract PCs from the data
+svd_world_data <- svd(final_stat_data)
+world_factors <- svd_world_data$u[,1:6] %*% diag(svd_world_data$d[1:6])
+
+favar_data <- as.matrix(cbind(stat_nl, world_factors))
+saveRDS(favar_data, "FAVARdata.rds")
 
 
 

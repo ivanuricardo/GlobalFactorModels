@@ -5,7 +5,6 @@ library(plotly)
 library(HDeconometrics)
 library(bigtime)
 library(HDGCvar)
-library(nowcasting)
 library(vars)
 
 set.seed(20230322)
@@ -51,25 +50,16 @@ var_res_plot4 <- plot(var_forecast_residuals[,11], type = 'l', main = "Oil Price
 var_res_plot5 <- plot(var_forecast_residuals[,12], type = 'l', main = "Materials Prices",
                       xlab = "Time", ylab = "Residual")
 var_res_plot6 <- plot(var_forecast_residuals[,13], type = 'l', main = "Metal Prices",
-                      xlab = "Time", ylab = "FResidual")
+                      xlab = "Time", ylab = "Residual")
 
-##### Process data for GFAVAR
 
-# A normal FAVAR
-# How many factors?
-ICfactors(final_stat_data) # 6 factors
-
-# Extract PCs from the data
-svd_world_data <- svd(final_stat_data)
-world_factors <- svd_world_data$u[,1:6] %*% diag(svd_world_data$d[1:6])
-
-favar_data <- as.matrix(cbind(stat_nl, world_factors))
+####### A normal FAVAR
+favar_data <- readRDS("data/FAVARdata.rds")
 
 # Lag length?
 lags_upbound_BIC(favar_data) # 2
 
 # Estimation
-
 favar_train <- favar_data[1:113,]
 favar_test <- favar_data[114:161,]
 first_favar <- VAR(favar_train, type = "none", p = 2)
@@ -196,18 +186,18 @@ for (sim in 2:num_forecasts) {
 
 par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
-gfavar_res_plot1 <- plot(as.numeric(gfavar_forecast_residuals[,1]), type = 'l', main = "NL GDP",
-                         xlab = "Time", ylab = "Residual")
-gfavar_res_plot2 <- plot(as.numeric(gfavar_forecast_residuals[,2]), type = 'l', main = "NL Inflation",
-                         xlab = "Time", ylab = "Residual")
-gfavar_res_plot3 <- plot(as.numeric(gfavar_forecast_residuals[,3]), type = 'l', main = "NL EP Index",
-                         xlab = "Time", ylab = "Residual")
-gfavar_res_plot4 <- plot(as.numeric(gfavar_forecast_residuals[,11]), type = 'l', main = "Oil Prices",
-                         xlab = "Time", ylab = "Residual")
-gfavar_res_plot5 <- plot(as.numeric(gfavar_forecast_residuals[,12]), type = 'l', main = "Materials Prices",
-                         xlab = "Time", ylab = "Residual")
-gfavar_res_plot6 <- plot(as.numeric(gfavar_forecast_residuals[,13]), type = 'l', main = "Metal Prices",
-                         xlab = "Time", ylab = "Residual")
+gfavar_res_plot1 <- plot(as.numeric(gfavar_forecast_residuals[,1]), type = 'l',
+                         main = "NL GDP", xlab = "Time", ylab = "Residual")
+gfavar_res_plot2 <- plot(as.numeric(gfavar_forecast_residuals[,2]), type = 'l',
+                         main = "NL Inflation", xlab = "Time", ylab = "Residual")
+gfavar_res_plot3 <- plot(as.numeric(gfavar_forecast_residuals[,3]), type = 'l',
+                         main = "NL EP Index", xlab = "Time", ylab = "Residual")
+gfavar_res_plot4 <- plot(as.numeric(gfavar_forecast_residuals[,11]), type = 'l',
+                         main = "Oil Prices", xlab = "Time", ylab = "Residual")
+gfavar_res_plot5 <- plot(as.numeric(gfavar_forecast_residuals[,12]), type = 'l',
+                         main = "Materials Prices", xlab = "Time", ylab = "Residual")
+gfavar_res_plot6 <- plot(as.numeric(gfavar_forecast_residuals[,13]), type = 'l',
+                         main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 
 
