@@ -65,33 +65,3 @@ tnsr_hosvd <- function(X, num_ranks) {
   fnorm_X <- sqrt(tensor_ip(X - X_hat))
   return(list(G = G, U = U_list, X_hat = X_hat, resid = fnorm_X))
 }
-
-
-
-# final stat tensor is X
-#' find the HOSVD for a tensor with a fixed time dimension
-hosvd2 <- function(X, country_set, econ_set) {
-  num_modes <- length(dim(X))
-  U_list <- vector("list", num_modes)
-  
-  num_ranks <- c(163, country_set, econ_set)
-  
-  # Factor Matrices
-  for (m in 1:num_modes) {
-    temp_mat <- tensorFun::unfold(X, m)
-    U_list[[m]] <- svd(temp_mat, nu = num_ranks[m])$u
-  }
-  
-  # Core Tensor
-  G <- X
-  for (n in 1:num_modes) {
-    G <- tensor(G, t(U_list[[n]]), alongA = 1, alongB = 2)
-  }
-  
-  # Estimate
-  X_hat <- G
-  for (o in 1:num_modes) {
-    X_hat <- tensor(X_hat, U_list[[o]], alongA = 1, alongB = 2)
-  }
-  return(sqrt(tensor_ip(X - X_hat)))
-}

@@ -3,8 +3,10 @@ library(readxl)
 library(tidyverse)
 library(reshape2)
 library(bootUR)
+library(plotly)
 library(tensorFun)
 library(nowcasting)
+library(tensor)
 set.seed(20230322)
 
 ###### Constructing Data
@@ -70,6 +72,90 @@ world_factors <- svd_world_data$u[,1:6] %*% diag(svd_world_data$d[1:6])
 
 favar_data <- as.matrix(cbind(stat_nl, world_factors))
 saveRDS(favar_data, "FAVARdata.rds")
+
+###### GFAVAR preprocessing
+
+# Need to modify hosvd2 function to only accept 2 inputs
+hosvd2 <- function(country_set, econ_set) {
+  X <- final_stat_tensor
+  num_modes <- length(dim(X))
+  U_list <- vector("list", num_modes)
+  
+  num_ranks <- c(163, country_set, econ_set)
+  
+  # Factor Matrices
+  for (m in 1:num_modes) {
+    temp_mat <- tensorFun::unfold(X, m)
+    U_list[[m]] <- svd(temp_mat, nu = num_ranks[m])$u
+  }
+  
+  # Core Tensor
+  G <- X
+  for (n in 1:num_modes) {
+    G <- tensor(G, t(U_list[[n]]), alongA = 1, alongB = 2)
+  }
+  
+  # Estimate
+  X_hat <- G
+  for (o in 1:num_modes) {
+    X_hat <- tensor(X_hat, U_list[[o]], alongA = 1, alongB = 2)
+  }
+  return(sqrt(tensor_ip(X - X_hat)))
+}
+
+# All possible combinations for the scree plot
+country_set <- 1:31
+econ_set <- 1:5
+
+###### 3D Plot for the factors
+vec_hosvd2 <- Vectorize(hosvd2)
+var_forecast_residuals <- outer(country_set, econ_set, vec_hosvd2)
+
+plot_ly(x = country_set, y = econ_set, z = var_forecast_residuals, 
+        type = "surface", mode = "markers",
+        text = sprintf("Value: %0.2f", var_forecast_residuals)) %>%
+  layout(scene = list(xaxis = list(title = "Country Set"),
+                      yaxis = list(title = "Econ Set"),
+                      zaxis = list(title = "F-Norm")),
+         title = "Scree Plot")
+
+# Plot the scree plots holding all elements of econ factors constant
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+plot_econ1 <- plot(var_forecast_residuals[,1], type = 'l',
+                   main = "Scree Plot for First Econ Factor",
+                   xlab = "Country factors", ylab = "Fit (fnorm)")
+plot_econ2 <- plot(var_forecast_residuals[,2], type = 'l',
+                   main = "Scree Plot for Second Econ Factor",
+                   xlab = "Country factors", ylab = "Fit (fnorm)")
+plot_econ3 <- plot(var_forecast_residuals[,3], type = 'l',
+                   main = "Scree Plot for Third Econ Factor",
+                   xlab = "Country factors", ylab = "Fit (fnorm)")
+plot_econ4 <- plot(var_forecast_residuals[,4], type = 'l',
+                   main = "Scree Plot for Fourth Econ Factor",
+                   xlab = "Country factors", ylab = "Fit (fnorm)")
+plot_econ5 <- plot(var_forecast_residuals[,5], type = 'l',
+                   main = "Scree Plot for Fifth Econ Factor",
+                   xlab = "Country factors", ylab = "Fit (fnorm)")
+
+# Then we choose 5 country factors and 3 economic factors and fnorm is 1.90. Perform HOSVD
+country_factors <- 5
+
+econ_factors <- 3
+
+hosvd_world <- tnsr_hosvd(final_stat_tensor,
+                          num_ranks = c(161, country_factors, econ_factors))
+
+# Create representative factor matrix
+world_g <- hosvd_world$G
+world_U <- hosvd_world$U[[1]]
+world_factors <- tensor(world_g, world_U, alongA = 1, alongB = 2)
+world_factors <- tensorFun::unfold(world_factors, 3)
+
+num_factors <- country_factors*econ_factors
+
+# Create data containing the factors and the Netherlands variables
+gfavar_data <- cbind(stat_nl, world_factors)
+saveRDS(gfavar_data, "GFAVARdata.rds")
 
 
 
