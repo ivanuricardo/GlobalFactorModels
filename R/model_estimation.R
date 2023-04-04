@@ -4,6 +4,7 @@ library(HDeconometrics)
 library(bigtime)
 library(HDGCvar)
 library(vars)
+library(tenso)
 
 set.seed(20230322)
 
@@ -15,7 +16,7 @@ var_test <- normal_var_data[114:161,]
 # Determine upper bound 
 lags_upbound_BIC(var_train)  # 1
 
-first_lasso_var <- sparseVAR(scale(normal_var_data[1:(113),]), p = 1, VARpen = "L1",
+first_lasso_var <- sparseVAR(scale(var_train), p = 1, VARpen = "L1",
                              selection = "cv")
 first_forecast_var <- directforecast(first_lasso_var)
 var_forecast_residuals <- t(matrix((first_forecast_var - var_test[1,])^2))
@@ -26,7 +27,7 @@ num_forecasts <- 49
 
 # Ignore the error at the end
 for (sim in 2:num_forecasts) {
-  sim_lasso_var <- sparseVAR(scale(normal_var_data[(1+sim):(112+sim),]), p = 1,
+  sim_lasso_var <- sparseVAR(scale(normal_var_data[(sim):(112+sim),]), p = 1,
                              VARpen = "L1",
                              selection = "cv")
   sim_forecast_var <- directforecast(sim_lasso_var)
@@ -67,11 +68,9 @@ favar_forecast_residuals <- t(matrix((first_forecast_favar - favar_test[1,])^2))
 
 # Rolling Window FAVAR
 
-num_forecasts <- 49
-
 # ignore the last error...
 for (sim in 2:num_forecasts) {
-  sim_favar <- VAR(favar_data[(1+sim):(112+sim),], p = 2, type = 'none')
+  sim_favar <- VAR(favar_data[(sim):(112+sim),], p = 2, type = 'none')
   sim_prediction_favar <- predict(sim_favar, n.ahead = 1)
   sim_forecast_favar <- sapply(sim_prediction_favar$fcst, `[`, 1)
   favar_forecast_residuals <- rbind(favar_forecast_residuals,
@@ -107,10 +106,8 @@ gfavar_forecast_residuals <- data.frame(t(matrix((first_forecast_gfavar -
 
 # Rolling Window GFAVAR
 
-num_forecasts <- 49
-
 for (sim in 2:num_forecasts) {
-  sim_gfavar <- VAR(gfavar_data[(1+sim):(112+sim),], p = 3, type = 'none')
+  sim_gfavar <- VAR(gfavar_data[(sim):(112+sim),], p = 3, type = 'none')
   sim_prediction_gfavar <- predict(sim_gfavar, n.ahead = 1)
   sim_forecast_gfavar <- sapply(sim_prediction_gfavar$fcst, `[`, 1)
   gfavar_res <- data.frame((sim_forecast_gfavar - gfavar_test[sim,])^2)
@@ -133,6 +130,44 @@ gfavar_res_plot5 <- plot(as.numeric(gfavar_forecast_residuals[,12]), type = 'l',
 gfavar_res_plot6 <- plot(as.numeric(gfavar_forecast_residuals[,13]), type = 'l',
                          main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
+# Sparse GFAVAR
+# I use the same data as the gfavar from above, but apply it to the lasso VAR 
+# implemented in bigtime.
+
+first_sparse_gfavar <- sparseVAR(scale(gfavar_train), p = 3, VARpen = "L1",
+                                 selection = "cv")
+first_forecast_sgfavar <- directforecast(first_sparse_gfavar)
+sgfavar_forecast_residuals <- data.frame(t(matrix((first_forecast_sgfavar -
+                                                     gfavar_test[1,])^2)))
+
+for (sim in 2:num_forecasts) {
+  sim_lasso_sgfavar <- sparseVAR(scale(gfavar_data[(sim):(112+sim),]), p = 3,
+                             VARpen = "L1",
+                             selection = "cv")
+  sim_forecast_sgfavar <- directforecast(sim_lasso_sgfavar)
+  sgfavar_res <- data.frame((sim_forecast_sgfavar - gfavar_test[sim,])^2)
+  colnames(sgfavar_res) <- colnames(sgfavar_forecast_residuals)
+  sgfavar_forecast_residuals <- rbind(sgfavar_forecast_residuals,
+                                      sgfavar_res)
+}
+
+par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+
+sgfavar_res_plot1 <- plot(as.numeric(sgfavar_forecast_residuals[,1]), type = 'l',
+                         main = "NL GDP", xlab = "Time", ylab = "Residual")
+sgfavar_res_plot2 <- plot(as.numeric(sgfavar_forecast_residuals[,2]), type = 'l',
+                         main = "NL Inflation", xlab = "Time", ylab = "Residual")
+sgfavar_res_plot3 <- plot(as.numeric(sgfavar_forecast_residuals[,3]), type = 'l',
+                         main = "NL EP Index", xlab = "Time", ylab = "Residual")
+sgfavar_res_plot4 <- plot(as.numeric(sgfavar_forecast_residuals[,11]), type = 'l',
+                         main = "Oil Prices", xlab = "Time", ylab = "Residual")
+sgfavar_res_plot5 <- plot(as.numeric(sgfavar_forecast_residuals[,12]), type = 'l',
+                         main = "Materials Prices", xlab = "Time", ylab = "Residual")
+sgfavar_res_plot6 <- plot(as.numeric(sgfavar_forecast_residuals[,13]), type = 'l',
+                         main = "Metal Prices", xlab = "Time", ylab = "Residual")
+
+
+####### Matrix DFM of Wang
 
 
 
