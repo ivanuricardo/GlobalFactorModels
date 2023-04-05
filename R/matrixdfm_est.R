@@ -31,6 +31,7 @@ for (sim in 2:num_forecasts) {
   colnames(matdfm_res) <- colnames(matdfm_forecast_residuals)
   matdfm_forecast_residuals <- rbind(matdfm_forecast_residuals, matdfm_res)
 }
+matdfm_forecast_residuals <- matdfm_forecast_residuals[-nrow(matdfm_forecast_residuals),]
 
 par(mfrow = c(3, 3), mar = c(2, 4, 2, 1), oma = c(0, 0, 2, 0))
 
@@ -46,6 +47,12 @@ matdfm_res_plot5 <- plot(as.numeric(matdfm_forecast_residuals[,12]), type = 'l',
                          main = "Materials Prices", xlab = "Time", ylab = "Residual")
 matdfm_res_plot6 <- plot(as.numeric(matdfm_forecast_residuals[,13]), type = 'l',
                          main = "Metal Prices", xlab = "Time", ylab = "Residual")
+
+# Boxplots
+num_matdfm_res <- apply(matdfm_forecast_residuals, 2, as.numeric)
+matdfm_resMeans <- colMeans(num_matdfm_res) %>% sqrt()
+matdfm_boxplot <- boxplot(matdfm_resMeans)
+matdfm_boxplot_stats <- matdfm_boxplot[["stats"]]
 
 ####### Sparse Matrix DFM
 
@@ -65,6 +72,7 @@ for (sim in 2:num_forecasts) {
   smatdfm_forecast_residuals <- rbind(smatdfm_forecast_residuals,
                                       smatdfm_res)
 }
+smatdfm_forecast_residuals <- smatdfm_forecast_residuals[-nrow(smatdfm_forecast_residuals),]
 
 par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
@@ -80,3 +88,9 @@ smatdfm_res_plot5 <- plot(as.numeric(smatdfm_forecast_residuals[,12]), type = 'l
                           main = "Materials Prices", xlab = "Time", ylab = "Residual")
 smatdfm_res_plot6 <- plot(as.numeric(smatdfm_forecast_residuals[,13]), type = 'l',
                           main = "Metal Prices", xlab = "Time", ylab = "Residual")
+
+# Root Mean of each series
+num_smatdfm_res <- apply(smatdfm_forecast_residuals, 2, as.numeric)
+smatdfm_resMeans <- colMeans(num_smatdfm_res) %>% sqrt()
+smatdfm_boxplot <- boxplot(smatdfm_resMeans)
+smatdfm_boxplot_stats <- smatdfm_boxplot[["stats"]]

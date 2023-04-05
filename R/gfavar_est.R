@@ -31,6 +31,7 @@ for (sim in 2:num_forecasts) {
   colnames(gfavar_res) <- colnames(gfavar_forecast_residuals)
   gfavar_forecast_residuals <- rbind(gfavar_forecast_residuals, gfavar_res)
 }
+gfavar_forecast_residuals <- gfavar_forecast_residuals[-nrow(gfavar_forecast_residuals),]
 
 par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
@@ -46,6 +47,12 @@ gfavar_res_plot5 <- plot(as.numeric(gfavar_forecast_residuals[,12]), type = 'l',
                          main = "Materials Prices", xlab = "Time", ylab = "Residual")
 gfavar_res_plot6 <- plot(as.numeric(gfavar_forecast_residuals[,13]), type = 'l',
                          main = "Metal Prices", xlab = "Time", ylab = "Residual")
+
+# Boxplots
+num_gfavar_res <- apply(gfavar_forecast_residuals, 2, as.numeric)
+gfavar_resMeans <- colMeans(num_gfavar_res) %>% sqrt()
+gfavar_boxplot <- boxplot(gfavar_resMeans)
+gfavar_boxplot_stats <- gfavar_boxplot[["stats"]]
 
 # Sparse GFAVAR
 # I use the same data as the gfavar from above, but apply it to the lasso VAR 
@@ -67,6 +74,7 @@ for (sim in 2:num_forecasts) {
   sgfavar_forecast_residuals <- rbind(sgfavar_forecast_residuals,
                                       sgfavar_res)
 }
+sgfavar_forecast_residuals <- sgfavar_forecast_residuals[-nrow(sgfavar_forecast_residuals),]
 
 par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
@@ -82,3 +90,9 @@ sgfavar_res_plot5 <- plot(as.numeric(sgfavar_forecast_residuals[,12]), type = 'l
                           main = "Materials Prices", xlab = "Time", ylab = "Residual")
 sgfavar_res_plot6 <- plot(as.numeric(sgfavar_forecast_residuals[,13]), type = 'l',
                           main = "Metal Prices", xlab = "Time", ylab = "Residual")
+
+# Boxplots
+num_sgfavar_res <- apply(sgfavar_forecast_residuals, 2, as.numeric)
+sgfavar_resMeans <- colMeans(num_sgfavar_res) %>% sqrt()
+sgfavar_boxplot <- boxplot(sgfavar_resMeans)
+sgfavar_boxplot_stats <- sgfavar_boxplot[["stats"]]

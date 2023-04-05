@@ -48,6 +48,10 @@ var_res_plot5 <- plot(var_forecast_residuals[,12], type = 'l', main = "Materials
 var_res_plot6 <- plot(var_forecast_residuals[,13], type = 'l', main = "Metal Prices",
                       xlab = "Time", ylab = "Residual")
 
+# Root Mean of each series
+var_resMeans <- colMeans(var_forecast_residuals) %>% sqrt()
+var_boxplot <- boxplot(var_resMeans)
+var_boxplot_stats <- var_boxplot[["stats"]]
 
 ####### A normal FAVAR
 favar_data <- readRDS("data/FAVARdata.rds")
@@ -89,4 +93,7 @@ favar_res_plot5 <- plot(favar_forecast_residuals[,12], type = 'l', main = "Mater
 favar_res_plot6 <- plot(favar_forecast_residuals[,13], type = 'l', main = "Metal Prices",
                         xlab = "Time", ylab = "Residual")
 
-
+# Root Mean of each series
+favar_resMeans <- colMeans(favar_forecast_residuals) %>% sqrt()
+favar_boxplot <- boxplot(favar_resMeans)
+favar_boxplot_stats <- favar_boxplot[["stats"]]
