@@ -88,5 +88,4 @@ smatdfm_res_plot6 <- plot(as.numeric(smatdfm_forecast_residuals[,13]), type = 'l
                           main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 # Root Mean of each series
-
 saveRDS(smatdfm_forecast_residuals, "smatdfm_forecast_residuals.rds")
