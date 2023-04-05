@@ -51,8 +51,7 @@ matdfm_res_plot6 <- plot(as.numeric(matdfm_forecast_residuals[,13]), type = 'l',
 # Boxplots
 num_matdfm_res <- apply(matdfm_forecast_residuals, 2, as.numeric)
 matdfm_resMeans <- colMeans(num_matdfm_res) %>% sqrt()
-matdfm_boxplot <- boxplot(matdfm_resMeans)
-matdfm_boxplot_stats <- matdfm_boxplot[["stats"]]
+saveRDS(matdfm_resMeans, "matdfm_resMeans.rds")
 
 ####### Sparse Matrix DFM
 
@@ -92,5 +91,4 @@ smatdfm_res_plot6 <- plot(as.numeric(smatdfm_forecast_residuals[,13]), type = 'l
 # Root Mean of each series
 num_smatdfm_res <- apply(smatdfm_forecast_residuals, 2, as.numeric)
 smatdfm_resMeans <- colMeans(num_smatdfm_res) %>% sqrt()
-smatdfm_boxplot <- boxplot(smatdfm_resMeans)
-smatdfm_boxplot_stats <- smatdfm_boxplot[["stats"]]
+saveRDS(smatdfm_resMeans, "smatdfm_resMeans.rds")
