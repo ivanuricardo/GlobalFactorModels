@@ -33,7 +33,7 @@ for (sim in 2:num_forecasts) {
 }
 gfavar_forecast_residuals <- gfavar_forecast_residuals[-nrow(gfavar_forecast_residuals),]
 
-par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
 gfavar_res_plot1 <- plot(as.numeric(gfavar_forecast_residuals[,1]), type = 'l',
                          main = "NL GDP", xlab = "Time", ylab = "Residual")
@@ -76,7 +76,7 @@ for (sim in 2:num_forecasts) {
 }
 sgfavar_forecast_residuals <- sgfavar_forecast_residuals[-nrow(sgfavar_forecast_residuals),]
 
-par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
 sgfavar_res_plot1 <- plot(as.numeric(sgfavar_forecast_residuals[,1]), type = 'l',
                           main = "NL GDP", xlab = "Time", ylab = "Residual")

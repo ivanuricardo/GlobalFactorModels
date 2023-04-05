@@ -33,7 +33,7 @@ for (sim in 2:num_forecasts) {
 }
 matdfm_forecast_residuals <- matdfm_forecast_residuals[-nrow(matdfm_forecast_residuals),]
 
-par(mfrow = c(3, 3), mar = c(2, 4, 2, 1), oma = c(0, 0, 2, 0))
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
 matdfm_res_plot1 <- plot(as.numeric(matdfm_forecast_residuals[,1]), type = 'l',
                          main = "NL GDP", xlab = "Time", ylab = "Residual")
@@ -74,7 +74,7 @@ for (sim in 2:num_forecasts) {
 }
 smatdfm_forecast_residuals <- smatdfm_forecast_residuals[-nrow(smatdfm_forecast_residuals),]
 
-par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
 smatdfm_res_plot1 <- plot(as.numeric(smatdfm_forecast_residuals[,1]), type = 'l',
                           main = "NL GDP", xlab = "Time", ylab = "Residual")

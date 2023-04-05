@@ -33,7 +33,7 @@ for (sim in 2:num_forecasts) {
 }
 
 # Plot the residuals
-par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+par(mfrow = c(2, 3), mar = c(4, 4, 1, 1), oma = c(0, 0, 2, 0))
 
 var_res_plot1 <- plot(var_forecast_residuals[,1], type = 'l', main = "NL GDP",
                       xlab = "Time", ylab = "Residual")
@@ -78,7 +78,7 @@ for (sim in 2:num_forecasts) {
                                     (sim_forecast_favar - favar_test[sim,])^2)
 }
 
-par(mfrow = c(3, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
+par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 
 favar_res_plot1 <- plot(favar_forecast_residuals[,1], type = 'l', main = "NL GDP",
                         xlab = "Time", ylab = "Residual")
