@@ -49,9 +49,8 @@ gfavar_res_plot6 <- plot(as.numeric(gfavar_forecast_residuals[,13]), type = 'l',
                          main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 # Boxplots
-num_gfavar_res <- apply(gfavar_forecast_residuals, 2, as.numeric)
-gfavar_resMeans <- colMeans(num_gfavar_res) %>% sqrt()
-saveRDS(gfavar_resMeans, "gfavar_resMeans.rds")
+
+saveRDS(gfavar_forecast_residuals, "gfavar_forecast_residuals.rds")
 
 # Sparse GFAVAR
 # I use the same data as the gfavar from above, but apply it to the lasso VAR 
@@ -91,6 +90,5 @@ sgfavar_res_plot6 <- plot(as.numeric(sgfavar_forecast_residuals[,13]), type = 'l
                           main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 # Boxplots
-num_sgfavar_res <- apply(sgfavar_forecast_residuals, 2, as.numeric)
-sgfavar_resMeans <- colMeans(num_sgfavar_res) %>% sqrt()
-saveRDS(sgfavar_resMeans, "sgfavar_resMeans.rds")
+
+saveRDS(sgfavar_forecast_residuals, "sgfavar_forecast_residuals.rds")

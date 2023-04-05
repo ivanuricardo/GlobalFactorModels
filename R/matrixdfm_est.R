@@ -49,9 +49,8 @@ matdfm_res_plot6 <- plot(as.numeric(matdfm_forecast_residuals[,13]), type = 'l',
                          main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 # Boxplots
-num_matdfm_res <- apply(matdfm_forecast_residuals, 2, as.numeric)
-matdfm_resMeans <- colMeans(num_matdfm_res) %>% sqrt()
-saveRDS(matdfm_resMeans, "matdfm_resMeans.rds")
+
+saveRDS(matdfm_forecast_residuals, "matdfm_forecast_residuals.rds")
 
 ####### Sparse Matrix DFM
 
@@ -89,6 +88,5 @@ smatdfm_res_plot6 <- plot(as.numeric(smatdfm_forecast_residuals[,13]), type = 'l
                           main = "Metal Prices", xlab = "Time", ylab = "Residual")
 
 # Root Mean of each series
-num_smatdfm_res <- apply(smatdfm_forecast_residuals, 2, as.numeric)
-smatdfm_resMeans <- colMeans(num_smatdfm_res) %>% sqrt()
-saveRDS(smatdfm_resMeans, "smatdfm_resMeans.rds")
+
+saveRDS(smatdfm_forecast_residuals, "smatdfm_forecast_residuals.rds")

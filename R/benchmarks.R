@@ -48,9 +48,7 @@ var_res_plot5 <- plot(var_forecast_residuals[,12], type = 'l', main = "Materials
 var_res_plot6 <- plot(var_forecast_residuals[,13], type = 'l', main = "Metal Prices",
                       xlab = "Time", ylab = "Residual")
 
-# Root Mean of each series
-var_resMeans <- colMeans(var_forecast_residuals) %>% sqrt()
-saveRDS(var_resMeans, "var_resMeans.rds")
+saveRDS(var_forecast_residuals, "var_forecast_residuals.rds")
 
 ####### A normal FAVAR
 favar_data <- readRDS("data/FAVARdata.rds")
@@ -93,5 +91,5 @@ favar_res_plot6 <- plot(favar_forecast_residuals[,13], type = 'l', main = "Metal
                         xlab = "Time", ylab = "Residual")
 
 # Root Mean of each series
-favar_resMeans <- colMeans(favar_forecast_residuals) %>% sqrt()
-saveRDS(favar_resMeans, "favar_resMeans.rds")
+
+saveRDS(favar_forecast_residuals, "favar_forecast_residuals.rds")
