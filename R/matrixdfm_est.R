@@ -1,3 +1,12 @@
+library(rTensor)
+library(tensorFun)
+library(HDeconometrics)
+library(bigtime)
+library(HDGCvar)
+library(vars)
+library(tensorTS)
+
+set.seed(20230322)
 
 ####### Matrix DFM of Wang
 matrixdfm_data <- readRDS("data/MATfactordata.rds")
@@ -11,6 +20,8 @@ first_prediction_matdfm <- predict(first_matdfm, n.ahead = 1)
 first_forecast_matdfm <- sapply(first_prediction_matdfm$fcst, `[`, 1)
 matdfm_forecast_residuals <- data.frame(t(matrix((first_forecast_matdfm -
                                                     matrixdfm_test[1,])^2)))
+
+num_forecasts <- 49
 
 for (sim in 2:num_forecasts) {
   sim_matdfm <- VAR(matrixdfm_data[(sim):(112+sim),], p = 2, type = 'none')

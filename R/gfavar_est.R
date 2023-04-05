@@ -1,6 +1,16 @@
+library(rTensor)
+library(tensorFun)
+library(HDeconometrics)
+library(bigtime)
+library(HDGCvar)
+library(vars)
+library(tensorTS)
+
+set.seed(20230322)
+
 # GFAVAR
 gfavar_data <- readRDS("data/GFAVARdata.rds")
-lags_upbound_BIC(gfavar_data)
+lags_upbound_BIC(gfavar_data)  # 3
 
 gfavar_train <- gfavar_data[1:113,]
 gfavar_test <- gfavar_data[114:161,]
@@ -11,6 +21,7 @@ gfavar_forecast_residuals <- data.frame(t(matrix((first_forecast_gfavar -
                                                     gfavar_test[1,])^2)))
 
 # Rolling Window GFAVAR
+num_forecasts <- 49
 
 for (sim in 2:num_forecasts) {
   sim_gfavar <- VAR(gfavar_data[(sim):(112+sim),], p = 3, type = 'none')

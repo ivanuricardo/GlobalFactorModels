@@ -1,10 +1,7 @@
-library(rTensor)
-library(tensorFun)
 library(HDeconometrics)
 library(bigtime)
 library(HDGCvar)
 library(vars)
-library(tensorTS)
 
 set.seed(20230322)
 
