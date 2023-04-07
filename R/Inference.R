@@ -2,6 +2,7 @@ library(ggplot2)
 library(ggpubr)
 library(desla)
 library(HDGCvar)
+library(igraph)
 set.seed(20230322)
 
 ####### Matrix DFM of Wang
@@ -198,3 +199,27 @@ figure2 <- ggarrange(graph_yr, graph_yf11, graph_ydps,
                      graph_ypmat, graph_ypmetal, graph_exy,
                      ncol = 3, nrow = 2)
 figure2
+
+####### Granger Causality
+normal_var_data <- readRDS("data/VARdata.rds")
+
+# Changing the bound does not do anything..?
+hdgc_netherlands <- HDGC_VAR_multiple_I0(normal_var_data, p = 1,
+                                         GCpairs = list(list("GCto"="y","GCfrom"="r"),
+                                                        list("GCto"="Dp","GCfrom"="r" )))
+
+hdgc_all <- HDGC_VAR_all_I0(normal_var_data, p = 1)
+
+hdgc_all_factors <- HDGC_VAR_all_I0(matrixdfm_data, p = 2)
+
+Plot_GC_all(hdgc_all_factors, Stat_type="FS_cor",alpha=0.01,directed=T,
+            layout=layout.circle, main="Network",edge.arrow.size=.2,vertex.size=5,
+            vertex.color=c("lightblue"), vertex.frame.color="blue",vertex.label.size=2,
+            vertex.label.color="black",vertex.label.cex=0.6, vertex.label.dist=1,
+            edge.curved=0,cluster=list(T,5,"black",0.8,1,0)) 
+
+Plot_GC_all(hdgc_all, Stat_type="FS_cor",alpha=0.01,multip_corr=list(F),directed=T,
+            layout=layout.circle, main="Network",edge.arrow.size=.2,vertex.size=5,
+            vertex.color=c("lightblue"), vertex.frame.color="blue",vertex.label.size=2,
+            vertex.label.color="black",vertex.label.cex=0.6, vertex.label.dist=1,
+            edge.curved=0,cluster=list(T,5,"black",0.8,1,0)) 
