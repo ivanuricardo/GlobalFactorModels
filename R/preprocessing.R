@@ -139,19 +139,19 @@ plot_ly(x = country_set, y = econ_set, z = var_forecast_residuals,
 # Plot the scree plots holding all elements of econ factors constant
 par(mfrow = c(2, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
 plot_econ1 <- plot(var_forecast_residuals[,1], type = 'l',
-                   main = "Scree Plot for First Econ Factor",
+                   main = "First Econ Factor",
                    xlab = "Country factors", ylab = "Fit (fnorm)")
 plot_econ2 <- plot(var_forecast_residuals[,2], type = 'l',
-                   main = "Scree Plot for Second Econ Factor",
+                   main = "Second Econ Factor",
                    xlab = "Country factors", ylab = "Fit (fnorm)")
 plot_econ3 <- plot(var_forecast_residuals[,3], type = 'l',
-                   main = "Scree Plot for Third Econ Factor",
+                   main = "Third Econ Factor",
                    xlab = "Country factors", ylab = "Fit (fnorm)")
 plot_econ4 <- plot(var_forecast_residuals[,4], type = 'l',
-                   main = "Scree Plot for Fourth Econ Factor",
+                   main = "Fourth Econ Factor",
                    xlab = "Country factors", ylab = "Fit (fnorm)")
 plot_econ5 <- plot(var_forecast_residuals[,5], type = 'l',
-                   main = "Scree Plot for Fifth Econ Factor",
+                   main = "Fifth Econ Factor",
                    xlab = "Country factors", ylab = "Fit (fnorm)")
 
 # Then we choose 5 country factors and 3 economic factors and fnorm is 1.90. Perform HOSVD
